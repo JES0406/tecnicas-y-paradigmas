@@ -1,28 +1,26 @@
 ﻿namespace Practica2
 {
-    class SpeedRadar : IMessageWritter
+    public class SpeedRadar : MeasuringDevice, IMessageWritter
     {
         //Radar doesn't know about Vechicles, just speed and plates
         private string plate;
         private float speed;
         private float legalSpeed = 50.0f;
-        public List<float> SpeedHistory { get; private set; }
 
-        public SpeedRadar()
+        public SpeedRadar() : base()
         {
             plate = "";
             speed = 0f;
-            SpeedHistory = new List<float>();
         }
 
-        public void TriggerRadar(Vehicle vehicle)
+        public override void Trigger(VehicleWithPlate vehicle)
         {
             plate = vehicle.GetPlate();
             speed = vehicle.GetSpeed();
-            SpeedHistory.Add(speed);
+            history.Add(speed);
         }
         
-        public string GetLastReading()
+        public override string GetLastReading()
         {
             if (speed > legalSpeed)
             {

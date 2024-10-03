@@ -1,30 +1,57 @@
 ﻿namespace Practica2
 {
-    class PoliceCar : Vehicle
+    public class PoliceCar : VehicleWithPlate
     {
         //constant string as TypeOfVehicle wont change allong PoliceCar instances
         private const string typeOfVehicle = "Police Car"; 
         private bool isPatrolling;
-        private SpeedRadar speedRadar;
+        private MeasuringDevice measuringDevice;
+        private bool pursuing = false;
 
-        public PoliceCar(string plate) : base(typeOfVehicle, plate)
+        public PoliceCar(string plate, MeasuringDevice measuringDevice = null) : base(typeOfVehicle, plate)
         {
             isPatrolling = false;
-            speedRadar = new SpeedRadar();
+            this.measuringDevice = measuringDevice; // radar can be NULL
         }
 
         public void UseRadar(Vehicle vehicle)
         {
+            if (checkDevice())
+            { 
+                Console.WriteLine(WriteMessage("No radar available."));
+                return;
+            }
             if (isPatrolling)
-            {
-                speedRadar.TriggerRadar(vehicle);
-                string meassurement = speedRadar.GetLastReading();
-                Console.WriteLine(WriteMessage($"Triggered radar. Result: {meassurement}"));
+                {
+                if (vehicle is VehicleWithPlate vehicleWithPlate)
+                    {
+                        measuringDevice.Trigger(vehicleWithPlate);
+                        string meassurement = measuringDevice.GetLastReading();
+                        Console.WriteLine(WriteMessage($"Triggered measuring device. Result: {meassurement}"));
+                        if (meassurement.Contains("Catched"))
+                        {
+                            StartPursuit(vehicleWithPlate.GetPlate());
+                        }
+                    }
+                else
+                {
+                    Console.WriteLine(WriteMessage("tried to scan a vehicle with no plate."));
+                }
             }
-            else
+                else
+                {
+                    Console.WriteLine(WriteMessage($"has no active device."));
+                }
+        }
+
+        private bool checkDevice()
+        {
+            if (measuringDevice == null)
             {
-                Console.WriteLine(WriteMessage($"has no active radar."));
+                Console.WriteLine(WriteMessage("has no device."));
+                return false;
             }
+            return true;
         }
 
         public bool IsPatrolling()
@@ -58,13 +85,25 @@
             }
         }
 
-        public void PrintRadarHistory()
+        public void PrintHistory()
+
         {
+            if (!checkDevice())
+            {
+                Console.WriteLine(WriteMessage("No device available."));
+                return;
+            }
             Console.WriteLine(WriteMessage("Report radar speed history:"));
-            foreach (float speed in speedRadar.SpeedHistory)
+            foreach (float speed in measuringDevice.history)
             {
                 Console.WriteLine(speed);
             }
+        }
+
+        public void StartPursuit(string plate)
+        {
+            pursuing = true;
+            Console.WriteLine(WriteMessage($"started pursuit of {plate}."));
         }
     }
 }
