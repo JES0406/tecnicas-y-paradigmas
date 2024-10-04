@@ -3,7 +3,7 @@ using System;
 
 public class City: IMessageWritter
 {
-	private PoliceStation policeStation = new PoliceStation();
+    private PoliceStation policeStation;
     private List<Taxi> taxiList;
     public City()
 	{
@@ -20,15 +20,14 @@ public class City: IMessageWritter
         set { taxiList = value; }
     }
 
-    private void AddTaxi(Taxi taxi)
+    public void SetPoliceStation(PoliceStation policeStation)
     {
-        TaxiList.Add(taxi);
+        this.policeStation = policeStation;
     }
 
-    public void RegisterTaxi(string plate)
+    public void AddTaxi(Taxi taxi)
     {
-        Taxi taxi = new Taxi(plate);
-        AddTaxi(taxi);
+        TaxiList.Add(taxi);
     }
 
     public void RemoveLicense(string plate)

@@ -9,11 +9,17 @@
         private bool pursuing = false;
         private PoliceStation baseStation;
 
-        public PoliceCar(string plate, PoliceStation baseStation, MeasuringDevice measuringDevice = null) : base(typeOfVehicle, plate)
+        public PoliceCar(string plate, MeasuringDevice measuringDevice = null) : base(typeOfVehicle, plate)
         {
             isPatrolling = false;
-            this.baseStation = baseStation;
+            baseStation = null;
             this.measuringDevice = measuringDevice; // radar can be NULL
+        }
+
+        public void SetBaseStation(PoliceStation baseStation)
+        {
+            this.baseStation = baseStation;
+            baseStation.PoliceCars.Add(this);
         }
 
         // Patrolling logic
@@ -75,8 +81,15 @@
                     string meassurement = measuringDevice.GetLastReading();
                     Console.WriteLine(WriteMessage($"Triggered measuring device. Result: {meassurement}"));
                     if (meassurement.Contains("Catched"))
-                    {
-                        SendAlarm(vehicleWithPlate.GetPlate());
+                    { 
+                        if (baseStation == null)
+                        {
+                            StartPursuit(vehicleWithPlate.GetPlate());
+                        }
+                        else
+                        {
+                            SendAlarm(vehicleWithPlate.GetPlate());
+                        }
                     }
                 }
                 else

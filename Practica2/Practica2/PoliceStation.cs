@@ -23,19 +23,9 @@
             set { policeCars = value; }
         }
         // Police car registration logic
-        private void AddPoliceCar(PoliceCar policeCar)
+        public void AddPoliceCar(PoliceCar policeCar)
         {
             policeCars.Add(policeCar);
-        }
-        public void RegisterPoliceCar(string plate, string typeOfMeasuringDevice)
-        {
-            MeasuringDevice measuringDevice = null;
-            if (typeOfMeasuringDevice == "SpeedRadar")
-            {
-                measuringDevice = new SpeedRadar();
-            }
-            PoliceCar policeCar = new PoliceCar(plate, this, measuringDevice);
-            AddPoliceCar(policeCar);
         }
 
         // Alert logic
