@@ -3,7 +3,7 @@ using System;
 
 namespace Practica2
 {
-    public class VehicleWithPlate : Vehicle
+    public abstract class VehicleWithPlate : Vehicle
     {
         public string plate;
         public VehicleWithPlate(string typeOfVehicle, string plate) : base(typeOfVehicle)

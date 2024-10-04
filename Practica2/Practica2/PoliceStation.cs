@@ -3,7 +3,6 @@
     public class PoliceStation
     {
         private List<PoliceCar> policeCars = new List<PoliceCar>();
-        private bool alert = false;
         private string speedingPlate = "";
 
         // We start the class
@@ -12,26 +11,22 @@
         }
 
         // getters and setters
-
-        public bool SetAlert(bool alert, string speedingPlate)
-        {
-            this.alert = alert;
-            this.speedingPlate = speedingPlate;
-            SendPlateToPoliceCars(speedingPlate);
-            return alert;
-        }
-
         public string SpeedingPlate
         {
             get { return speedingPlate; }
             set { speedingPlate = value; }
         }
 
-        public void AddPoliceCar(PoliceCar policeCar)
+        public List<PoliceCar> PoliceCars
+        {
+            get { return policeCars; }
+            set { policeCars = value; }
+        }
+        // Police car registration logic
+        private void AddPoliceCar(PoliceCar policeCar)
         {
             policeCars.Add(policeCar);
         }
-
         public void RegisterPoliceCar(string plate, string typeOfMeasuringDevice)
         {
             MeasuringDevice measuringDevice = null;
@@ -39,20 +34,27 @@
             {
                 measuringDevice = new SpeedRadar();
             }
-            else if (typeOfMeasuringDevice == "Breathalyser")
-            {
-                measuringDevice = new Breathalyser();
-            }
-            PoliceCar policeCar = new PoliceCar(plate);
+            PoliceCar policeCar = new PoliceCar(plate, this, measuringDevice);
             AddPoliceCar(policeCar);
         }
-        public void SendPlateToPoliceCars(string plate)
+
+        // Alert logic
+        public void SetAlert(string speedingPlate)
+        {
+            this.speedingPlate = speedingPlate;
+            SendPlateToPoliceCars(speedingPlate);
+        }
+
+        private void SendPlateToPoliceCars(string plate)
         {
             foreach (PoliceCar policeCar in policeCars)
             {
-               policeCar.StartPursuit(plate);
-
+                if (policeCar.IsPatrolling())
+                {
+                    policeCar.StartPursuit(plate);
+                }
             }
         }
+    }
 }
 

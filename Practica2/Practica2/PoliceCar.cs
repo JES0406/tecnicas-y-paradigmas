@@ -7,52 +7,16 @@
         private bool isPatrolling;
         private MeasuringDevice measuringDevice;
         private bool pursuing = false;
+        private PoliceStation baseStation;
 
-        public PoliceCar(string plate, MeasuringDevice measuringDevice = null) : base(typeOfVehicle, plate)
+        public PoliceCar(string plate, PoliceStation baseStation, MeasuringDevice measuringDevice = null) : base(typeOfVehicle, plate)
         {
             isPatrolling = false;
+            this.baseStation = baseStation;
             this.measuringDevice = measuringDevice; // radar can be NULL
         }
 
-        public void UseRadar(Vehicle vehicle)
-        {
-            if (checkDevice())
-            { 
-                Console.WriteLine(WriteMessage("No radar available."));
-                return;
-            }
-            if (isPatrolling)
-                {
-                if (vehicle is VehicleWithPlate vehicleWithPlate)
-                    {
-                        measuringDevice.Trigger(vehicleWithPlate);
-                        string meassurement = measuringDevice.GetLastReading();
-                        Console.WriteLine(WriteMessage($"Triggered measuring device. Result: {meassurement}"));
-                        if (meassurement.Contains("Catched"))
-                        {
-                            StartPursuit(vehicleWithPlate.GetPlate());
-                        }
-                    }
-                else
-                {
-                    Console.WriteLine(WriteMessage("tried to scan a vehicle with no plate."));
-                }
-            }
-                else
-                {
-                    Console.WriteLine(WriteMessage($"has no active device."));
-                }
-        }
-
-        private bool checkDevice()
-        {
-            if (measuringDevice == null)
-            {
-                Console.WriteLine(WriteMessage("has no device."));
-                return false;
-            }
-            return true;
-        }
+        // Patrolling logic
 
         public bool IsPatrolling()
         {
@@ -64,11 +28,11 @@
             if (!isPatrolling)
             {
                 isPatrolling = true;
-                Console.WriteLine(WriteMessage("started patrolling."));
+                Console.WriteLine(WriteMessage("Started patrolling."));
             }
             else
             {
-                Console.WriteLine(WriteMessage("is already patrolling."));
+                Console.WriteLine(WriteMessage("Is already patrolling."));
             }
         }
 
@@ -77,14 +41,50 @@
             if (isPatrolling)
             {
                 isPatrolling = false;
-                Console.WriteLine(WriteMessage("stopped patrolling."));
+                Console.WriteLine(WriteMessage("Stopped patrolling."));
             }
             else
             {
-                Console.WriteLine(WriteMessage("was not patrolling."));
+                Console.WriteLine(WriteMessage("Was not patrolling."));
             }
         }
 
+
+        // Device logic
+        private bool checkDevice()
+        {
+            if (measuringDevice == null)
+            {
+                Console.WriteLine(WriteMessage("Has no device."));
+                return false;
+            }
+            return true;
+        }
+        public void UseDevice(Vehicle vehicle)
+        {
+            if (!checkDevice())
+            {
+                Console.WriteLine(WriteMessage("No device available."));
+                return;
+            }
+            if (isPatrolling)
+            {
+                if (vehicle is VehicleWithPlate vehicleWithPlate)
+                {
+                    measuringDevice.Trigger(vehicleWithPlate);
+                    string meassurement = measuringDevice.GetLastReading();
+                    Console.WriteLine(WriteMessage($"Triggered measuring device. Result: {meassurement}"));
+                    if (meassurement.Contains("Catched"))
+                    {
+                        SendAlarm(vehicleWithPlate.GetPlate());
+                    }
+                }
+                else
+                {
+                    Console.WriteLine(WriteMessage("Tried to scan a vehicle with no plate."));
+                }
+            }
+        }
         public void PrintHistory()
 
         {
@@ -93,17 +93,26 @@
                 Console.WriteLine(WriteMessage("No device available."));
                 return;
             }
-            Console.WriteLine(WriteMessage("Report radar speed history:"));
-            foreach (float speed in measuringDevice.history)
+            Console.WriteLine(WriteMessage("Report device result history:"));
+            foreach (float result in measuringDevice.History)
             {
-                Console.WriteLine(speed);
+                Console.WriteLine(result);
             }
         }
-
+        // Pursuit logic
+        public bool IsPursuing()
+        {
+            return pursuing;
+        }
+        public void SendAlarm(string plate)
+        {
+            baseStation.SetAlert(plate);
+            StartPursuit(plate);
+        }
         public void StartPursuit(string plate)
         {
             pursuing = true;
-            Console.WriteLine(WriteMessage($"started pursuit of {plate}."));
+            Console.WriteLine(WriteMessage($"Started pursuit of {plate}."));
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Practica2
 {
-    public class SpeedRadar : MeasuringDevice, IMessageWritter
+    public class SpeedRadar : MeasuringDevice
     {
         //Radar doesn't know about Vechicles, just speed and plates
         private string plate;
@@ -17,7 +17,7 @@
         {
             plate = vehicle.GetPlate();
             speed = vehicle.GetSpeed();
-            history.Add(speed);
+            History.Add(speed);
         }
         
         public override string GetLastReading()
@@ -32,7 +32,7 @@
             }
         }
 
-        public virtual string WriteMessage(string radarReading)
+        public override string WriteMessage(string radarReading)
         {
             return $"Vehicle with plate {plate} at {speed.ToString()} km/h. {radarReading}";
         }

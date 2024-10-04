@@ -1,13 +1,23 @@
 ﻿using Practica2;
 using System;
 
-public class City
+public class City: IMessageWritter
 {
-	PoliceStation policeStation = new PoliceStation();
-	public List<Taxi> TaxiList { get; set; }
+	private PoliceStation policeStation = new PoliceStation();
+    private List<Taxi> taxiList;
     public City()
 	{
-        TaxiList = new List<Taxi>();
+        taxiList = new List<Taxi>();
+    }
+
+    public PoliceStation PoliceStation()
+    {
+        return policeStation;
+    }
+    public List<Taxi> TaxiList
+    {
+        get { return taxiList; }
+        set { taxiList = value; }
     }
 
     private void AddTaxi(Taxi taxi)
@@ -28,8 +38,19 @@ public class City
             if (taxi.GetPlate() == plate)
             {
                 TaxiList.Remove(taxi);
+                Console.WriteLine(WriteMessage($"Taxi with plate {plate} has been removed."));
                 break;
             }
         }
+    }
+
+    public override string ToString()
+    {
+        return "City";
+    }
+
+    public string WriteMessage(string message)
+    {
+        return $"{this}: {message}";
     }
 }
