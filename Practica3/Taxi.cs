@@ -34,5 +34,12 @@ namespace Practica3
                 lastHealthPoints = value;
             }
         }
+        public void Impact(Obstacle obstacle)
+        {
+            Console.WriteLine($"Taxi impacted by {obstacle.ToString()}");
+            this.HealthPoints -= obstacle.damage;
+            this.Speed *= obstacle.speedMultiplier;
+            this.debuffTime = obstacle.debuffDuration; // effect applier
+        }
     }
 }

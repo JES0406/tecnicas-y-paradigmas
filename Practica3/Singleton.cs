@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Practica3
 {
-    public class Singleton<T> where T : class
+    public class Singleton<T> where T : class, new()
     {
         private static T _instance;
         protected Singleton() { }

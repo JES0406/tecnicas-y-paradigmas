@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using System.Timers;
 
 namespace Practica3
 {
@@ -7,80 +8,71 @@ namespace Practica3
         public static void Main(string[] args)
         {
             Taxi taxi = Taxi.GetInstance();
+            float originalSpeed = taxi.Speed;
             ObstacleFactory obstacleFactory = new ObstacleFactory();
-            List<Obstacle> obstacles = new List<Obstacle>();
             float timer = 0f;
             float debuffTimer = 0f;
-
-            while (true)
-            {
-                // Logic
-                // Obstacle logic
-                ObstacleLogic(obstacleFactory, obstacles);
-
-                // Taxi logic
-                // If contact is done, the impact is calculated
-                // Then the global timer takes into account the debuff duration
-                // If the debuff duration is over, the taxi recovers its speed
-
-                debuffTimer -= 0.02f;
-                if (debuffTimer <= 0)
-                {
-                    taxi.Speed = 1;
-                }
-
-
-                // The loop executes every 20 ms
-                Thread.Sleep(20);
-                timer += 0.02f;
-            }
-        }
-        static void ObstacleLogic(ObstacleFactory obstacleFactory, List<Obstacle> obstacles)
-        {
-            string key = AskForObstacle();
-            BuildObstacle(key, obstacles, obstacleFactory);
-        }
-        static string AskForObstacle()
-        {
+            // Usar el datatime para tener un reloj
+            // Comparar el actual 
             Console.WriteLine(@"Press a key to create an obstacle: 
             A -> Police car
             S -> Construction fence
             D -> Debuff
             ");
 
-            string key = Console.ReadLine();
+            while (true)
+            {
+                // Logic
+                // Obstacle logic
+                Obstacle? obstacle = ObstacleLogic(obstacleFactory);
+                if (obstacle != null)
+                {
+                    taxi.Impact(obstacle);
+                }
+
+                debuffTimer -= 0.02f;
+                if (debuffTimer <= 0)
+                {
+                    taxi.Speed = 1;
+                }
+                // The loop executes every 20 ms
+                Thread.Sleep(20);
+                timer += 0.02f;
+            }
+        }
+        static Obstacle? ObstacleLogic(ObstacleFactory obstacleFactory)
+        {
+            ConsoleKey key = AskForObstacle();
+            ObstacleType? obstacleType = BuildObstacle(key);
+            Obstacle? obstacle = null;
+            if (obstacleType != null)
+            {
+                obstacle = obstacleFactory.CreateObstacle(obstacleType.Value); // Safe by the if statement
+            }
+            return obstacle;
+        }
+        static ConsoleKey AskForObstacle()
+        {
+
+            ConsoleKey key = Console.ReadKey(true).Key;
             return key;
         }
-        static void BuildObstacle(string key, List<Obstacle> obstacles, ObstacleFactory obstacleFactory)
+        static ObstacleType? BuildObstacle(ConsoleKey key)
         {
-            Obstacle obstacle = null;
-
+            ObstacleType? obstacle = null;
             switch (key)
             {
-                case "A":
-                    obstacle = obstacleFactory.CreateObstacle(ObstacleType.PoliceCar);
+                case ConsoleKey.A:
+                    obstacle = ObstacleType.PoliceCar;
                     break;
-                case "S":
-                    obstacle = obstacleFactory.CreateObstacle(ObstacleType.ConstructionFence); // Fixed typo
+                case ConsoleKey.S:
+                    obstacle = ObstacleType.ConstructionFence; 
                     break;
-                case "D":
-                    obstacle = obstacleFactory.CreateObstacle(ObstacleType.Debuff); // Fixed typo
-                    break;
-                default:
+                case ConsoleKey.D:
+                    obstacle = ObstacleType.Debuff;
                     break;
             }
-
-            if (obstacle != null)
-            {
-                obstacles.Add(obstacle);
-            }
-        }
-        public float Impact(Obstacle obstacle, Taxi taxi)
-        {
-            Console.WriteLine($"Taxi impacted by {obstacle.ToString()}");
-            taxi.HealthPoints -= obstacle.damage;
-            taxi.Speed *= obstacle.speedMultiplier;
-            return obstacle.debuffDuration;
+            return obstacle;            
         }
     }
 }

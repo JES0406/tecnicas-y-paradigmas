@@ -1,5 +1,7 @@
 ﻿
 
+// generalizar la la factoria
+
 namespace Practica3
 {
     internal class ObstacleFactory: Singleton<ObstacleFactory>
