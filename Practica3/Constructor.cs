@@ -4,9 +4,12 @@
 
 namespace Practica3
 {
-    internal class ObstacleFactory: Singleton<ObstacleFactory>
+    internal class ObstacleFactory
     {
         // Class that constructs the objects
+
+        public ObstacleFactory() { }
+
         public virtual Obstacle CreateObstacle(ObstacleType obstacleType) 
         {
             switch (obstacleType) {

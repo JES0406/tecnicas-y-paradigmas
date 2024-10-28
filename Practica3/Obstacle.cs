@@ -1,4 +1,6 @@
-﻿namespace Practica3
+﻿using System.Reflection;
+
+namespace Practica3
 {
     public abstract class Obstacle
     {
@@ -17,7 +19,7 @@
             this.debuffDuration = debuffDuration;
         }
 
-        public virtual string ToString()
+        public override string ToString()
         {
             return "Obstacle";
         }

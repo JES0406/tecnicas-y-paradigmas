@@ -9,18 +9,17 @@ namespace Practica3
     public class Taxi : Singleton<Taxi>
     {
         int healthPoints = 100;
-        int lastHealthPoints;
         float speed = 1;
-        float lastSpeed;
+        public float originalSpeed;
 
         public float Speed
         {
             get { return speed; }
             set
             {
+                Console.WriteLine($"Speed set to {value} from {speed}");
                 speed = value;
-                Console.WriteLine($"Speed set to {value} from {lastSpeed}");
-                lastSpeed = value;
+
             }
         }
 
@@ -29,17 +28,20 @@ namespace Practica3
             get { return healthPoints; }
             set
             {
-                Console.WriteLine($"Health points set to {value} from {lastHealthPoints}");
+                Console.WriteLine($"Health points set to {value} from {healthPoints}");
                 healthPoints = value;
-                lastHealthPoints = value;
+                if ( healthPoints <= 0 )
+                {
+                    healthPoints = 0;
+                    Console.WriteLine("The taxi has died T_T");
+                }
             }
         }
         public void Impact(Obstacle obstacle)
         {
             Console.WriteLine($"Taxi impacted by {obstacle.ToString()}");
             this.HealthPoints -= obstacle.damage;
-            this.Speed *= obstacle.speedMultiplier;
-            this.debuffTime = obstacle.debuffDuration; // effect applier
+            this.Speed = this.originalSpeed*obstacle.speedMultiplier; 
         }
     }
 }

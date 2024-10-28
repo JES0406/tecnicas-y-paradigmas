@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using System.Timers;
+﻿
 
 namespace Practica3
 {
@@ -9,10 +8,12 @@ namespace Practica3
         {
             Taxi taxi = Taxi.GetInstance();
             float originalSpeed = taxi.Speed;
-            ObstacleFactory obstacleFactory = new ObstacleFactory();
-            float timer = 0f;
+            taxi.originalSpeed = originalSpeed;
+            ObstacleFactory obstacleFactory = new();
             float debuffTimer = 0f;
             // Usar el datatime para tener un reloj
+            DateTime now = DateTime.Now;
+            TimeSpan delay = TimeSpan.FromMilliseconds(20);
             // Comparar el actual 
             Console.WriteLine(@"Press a key to create an obstacle: 
             A -> Police car
@@ -22,22 +23,22 @@ namespace Practica3
 
             while (true)
             {
-                // Logic
-                // Obstacle logic
-                Obstacle? obstacle = ObstacleLogic(obstacleFactory);
-                if (obstacle != null)
+                if (DateTime.Now > now + delay) 
                 {
-                    taxi.Impact(obstacle);
-                }
+                    now = DateTime.Now;
+                    Obstacle? obstacle = ObstacleLogic(obstacleFactory);
+                    if (obstacle != null)
+                    {
+                        taxi.Impact(obstacle);
+                        debuffTimer = obstacle.debuffDuration;
+                    }
 
-                debuffTimer -= 0.02f;
-                if (debuffTimer <= 0)
-                {
-                    taxi.Speed = 1;
+                    debuffTimer -= 0.02f;
+                    if (debuffTimer <= 0)
+                    {
+                        taxi.Speed = 1;
+                    }
                 }
-                // The loop executes every 20 ms
-                Thread.Sleep(20);
-                timer += 0.02f;
             }
         }
         static Obstacle? ObstacleLogic(ObstacleFactory obstacleFactory)
