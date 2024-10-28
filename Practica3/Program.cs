@@ -10,11 +10,11 @@ namespace Practica3
             float originalSpeed = taxi.Speed;
             taxi.originalSpeed = originalSpeed;
             ObstacleFactory obstacleFactory = new();
+
             float debuffTimer = 0f;
-            // Usar el datatime para tener un reloj
             DateTime now = DateTime.Now;
             TimeSpan delay = TimeSpan.FromMilliseconds(20);
-            // Comparar el actual 
+
             Console.WriteLine(@"Press a key to create an obstacle: 
             A -> Police car
             S -> Construction fence

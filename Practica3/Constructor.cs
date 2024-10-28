@@ -6,22 +6,22 @@ namespace Practica3
 {
     internal class ObstacleFactory
     {
-        // Class that constructs the objects
-
         public ObstacleFactory() { }
 
-        public virtual Obstacle CreateObstacle(ObstacleType obstacleType) 
+        public virtual Obstacle CreateObstacle(ObstacleType obstacleType)
         {
-            switch (obstacleType) {
-                case ObstacleType.PoliceCar:
-                    return new PoliceCar();
-                case ObstacleType.ConstructionFence:
-                    return new CosntructionFence();
-                case ObstacleType.Debuff:
-                    return new Debuff();
-                default:
-                    return null;
+            string className = obstacleType.ToString();
+            Type obstacleTypeClass = Type.GetType(className);
+
+            if (obstacleTypeClass == null)
+            {
+                Console.WriteLine($"Class for {className} not found.");
+                return null;
             }
+
+            // Use reflection to create an instance of the type
+            return Activator.CreateInstance(obstacleTypeClass) as Obstacle;
         }
     }
+
 }
