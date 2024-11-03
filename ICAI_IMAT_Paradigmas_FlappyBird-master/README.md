@@ -1,1 +1,0 @@
-# ICAI_IMAT_Paradigmas_FlappyBird
