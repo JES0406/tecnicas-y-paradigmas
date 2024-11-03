@@ -1,5 +1,14 @@
-/Practica*/.vs
-/Practica*/obj
-/Practica*/bin
+/**/.vs
+/**/obj
+/**/bin
+/**/temp
+/**/.vsconfig
 
 *.zip
+/**/Library
+/**/UserSettings
+/**/UpgradeLog*.htm
+/**/Temp
+/**/ProjectSettings
+/**/Packages
+/**/Logs
